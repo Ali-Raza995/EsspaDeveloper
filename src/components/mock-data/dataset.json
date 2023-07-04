@@ -1,0 +1,79 @@
+{
+  "Are_you_looking_for_academic_support_in_university": {
+    "label": "Are you looking for academic support in university?",
+    "type": "radio",
+    "visibility": true,
+    "validation": {
+      "regex": null,
+      "required_value": "YES",
+      "message": "At this time we only assist students looking for academic support."
+    },
+    "answers": {
+      "YES": "YES",
+      "NO": "NO"
+    },
+    "show_more": null
+  },
+  "Are_you_facing_difficulties_with_study_workload": {
+    "label": "Are you facing difficulties managing your study workload?",
+    "type": "radio",
+    "visibility": true,
+    "validation": null,
+    "answers": {
+      "YES": "YES",
+      "NO": "NO"
+    },
+    "show_more": null
+  },
+  "Are_you_currently_taking_any_tutoring_or_counselling": {
+    "label": "Are you currently taking any tutoring or counselling sessions?",
+    "type": "radio",
+    "visibility": true,
+    "validation": null,
+    "answers": {
+      "YES": "YES",
+      "NO": "NO"
+    },
+    "show_more": null
+  },
+  "What_academic_support_are_you_seeking": {
+    "label": "Please identify all the academic support or resources you are seeking?",
+    "type": "checkbox",
+    "visibility": true,
+    "validation": null,
+    "answers": {
+      "Tutoring": "Tutoring",
+      "Counselling": "Counselling",
+      "Study Groups": "Study Groups",
+      "Workshops": "Workshops",
+      "Other Supports": "Other Supports"
+    },
+    "show_more": {
+      "Other Supports": ["Specify_other_academic_supports_you_are_seeking"]
+    }
+  },
+  "Specify_other_academic_supports_you_are_seeking": {
+    "label": "Please specify other academic supports you are seeking?",
+    "type": "textarea",
+    "visibility": false,
+    "validation": {
+      "regex": "/^[a-zA-Z0-9\\s.,!?]{1,150}$/",
+      "required_value": null,
+      "message": null
+    },
+    "answers": null,
+    "show_more": null
+  },
+  "Can_you_attend_regularly_scheduled_tutoring_sessions": {
+    "label": "Can you attend regularly scheduled tutoring sessions?",
+    "type": "radio",
+    "visibility": true,
+    "validation": null,
+    "answers": {
+      "YES": "YES",
+      "NO": "NO"
+    },
+    "show_more": null
+  }
+}
+
