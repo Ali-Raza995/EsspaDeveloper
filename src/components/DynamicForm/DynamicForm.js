@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import './form.css'
+import "./form.css";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import questionData from "../mock-data/dataset.json";
 import Question from "./Questions";
 
 const DynamicForm = () => {
-  // Will be Generating initial form values and validation schema 
+  // Will be Generating initial form values and validation schema
   const initialFormValues = {};
   const validationSchema = Yup.object().shape(
     Object.entries(questionData).reduce((schema, [questionKey, question]) => {
@@ -44,17 +44,42 @@ const DynamicForm = () => {
           onSubmit={handleSubmit}
         >
           {({ values, errors, handleChange }) => (
+
+           
             <Form>
               {Object.keys(questionData).map((questionKey) => {
                 const question = questionData[questionKey];
                 if (!question.visibility) return null;
-
-                // Other fields should be disabled if my answer for this field is No, as its required for this 
-                const isDisabled =
-                  questionKey !=="Are_you_looking_for_academic_support_in_university" &&
-                  !!errors[
-                    "Are_you_looking_for_academic_support_in_university"
-                  ];
+                console.log('Answer By User', values)
+                //  Logic Implementing on See More functionality, matching user's answer and see more object key
+                Object.entries(questionData).forEach(([questionKey, question]) => {
+                  const { show_more: showMore, answers } = question;
+                  if (showMore && typeof showMore === "object" && Object.keys(showMore).length > 0) {
+                    Object.entries(showMore).forEach(([showMoreKey, showMoreValues]) => {
+                      const matchingKey = Object.keys(questionData).find((key) =>
+                        showMoreValues.includes(key)
+                      );
+                      const matchingObject = questionData[matchingKey];
+                      console.log("matchingObject", matchingObject);
+                      if (matchingObject) {
+                        const selectedAnswers = values[questionKey] || []; // Get the selected answer values as an array
+                        const matchingAnswers = Object.keys(answers).filter((answerKey) =>
+                          selectedAnswers.includes(answers[answerKey])
+                        );
+                        console.log("matchingAnswers", matchingAnswers);
+                        // If user's answer and see more object ki values matches, visibility should be true
+                        if (matchingAnswers.includes(showMoreKey)) {
+                          // matchingObject.visibility = true ; // Update visibility to true
+                        }
+                      }
+                    });
+                  }
+                });
+                // Other fields should be disabled if my answer for this field is No, as its required for this
+                const errorKeys = Object.keys(errors);
+                const isDisabled = errorKeys.some(
+                  (errorKey) => questionKey !== errorKey && !!errors[errorKey]
+                );
                 return (
                   <Question
                     key={questionKey}
