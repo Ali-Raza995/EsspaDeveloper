@@ -1,5 +1,4 @@
 import { Field } from "formik";
-import questionData1 from "../mock-data/dataset.json";
 
 const Question = ({
   question,

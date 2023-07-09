@@ -1,40 +1,39 @@
 import React, { useState } from "react";
-import { Formik, Form, Field, ErrorMessage, FastField } from "formik";
+import './form.css'
+import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import questionData from "../mock-data/dataset.json";
 import Question from "./Questions";
 
-const initialFormValues = {
-  Are_you_looking_for_academic_support_in_university: "",
-  Are_you_facing_difficulties_with_study_workload: "",
-  Are_you_currently_taking_any_tutoring_or_counselling: "",
-  What_academic_support_are_you_seeking: [],
-  Specify_other_academic_supports_you_are_seeking: "",
-  Can_you_attend_regularly_scheduled_tutoring_sessions: "",
-};
-
-const validationSchema = Yup.object().shape({
-  Are_you_looking_for_academic_support_in_university: Yup.string().oneOf(
-    ["YES"],
-    "At this time we only assist students looking for academic support."
-  ),
-  What_academic_support_are_you_seeking: Yup.array(),
-  Specify_other_academic_supports_you_are_seeking: Yup.string().matches(
-    /^[a-zA-Z0-9\s.,!?]{1,150}$/,
-    "Please enter a valid value."
-  ),
-  Can_you_attend_regularly_scheduled_tutoring_sessions: Yup.string(),
-});
-
 const DynamicForm = () => {
+  // Will be Generating initial form values and validation schema 
+  const initialFormValues = {};
+  const validationSchema = Yup.object().shape(
+    Object.entries(questionData).reduce((schema, [questionKey, question]) => {
+      if (!question.visibility) return schema;
+      initialFormValues[questionKey] = "";
+      if (question.validation && question.validation.required_value) {
+        schema[questionKey] = Yup.string().oneOf(
+          [question.validation.required_value],
+          question.validation.message
+        );
+      }
+      return schema;
+    }, {})
+  );
   // Consoling values onSubmit my form
-  const handleSubmit = (values, { resetForm }) => {
-    console.log(values);
-    alert("You form submmited");
-    // Reset the form after submission
-    resetForm();
+  const handleSubmit = async (values, { resetForm }) => {
+    try {
+      await validationSchema.validate(values, { abortEarly: false });
+      console.log(values);
+      alert("Your form submitted successfully, Check values in console");
+      // Reset the form after successful submission
+      resetForm();
+    } catch (errors) {
+      console.error(errors);
+      alert("Please fill in the required fields correctly.");
+    }
   };
-
   return (
     <div className="_parent-wrapper">
       <div className="_form-style">
@@ -46,16 +45,17 @@ const DynamicForm = () => {
         >
           {({ values, errors, handleChange }) => (
             <Form>
-              {Object.entries(questionData).map(([questionKey, question]) => {
+              {Object.keys(questionData).map((questionKey) => {
+                const question = questionData[questionKey];
                 if (!question.visibility) return null;
+
+                // Other fields should be disabled if my answer for this field is No, as its required for this 
                 const isDisabled =
-                  questionKey !==
-                    "Are_you_looking_for_academic_support_in_university" &&
+                  questionKey !=="Are_you_looking_for_academic_support_in_university" &&
                   !!errors[
                     "Are_you_looking_for_academic_support_in_university"
                   ];
                 return (
-                  // Component where components's will exist
                   <Question
                     key={questionKey}
                     question={question}
@@ -66,8 +66,11 @@ const DynamicForm = () => {
                   />
                 );
               })}
-              {/* Submittin form onclick  */}
-              <button type="submit" className="_submit-btn">
+              <button
+                type="submit"
+                className="_submit-btn"
+                disabled={Object.keys(errors).length > 0}
+              >
                 Submit
               </button>
             </Form>
